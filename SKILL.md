@@ -1,11 +1,11 @@
 ---
 name: xiaoyaoclaw-context-budget
 description: >
-  OpenClaw 上下文检查 / 上下文优化（Context Budget）. 核心目的 = 上下文优化：
-  dynamically enumerates the models currently enabled in this installation, fetches each
-  model's published context window from its vendor's official source, and proposes a
-  window = 60% of the vendor spec. After the user confirms with one digit, it writes the
-  values via config.patch and verifies.
+  OpenClaw context check / context optimization (Context Budget). Core goal = context
+  optimization: dynamically enumerates the models currently enabled in this installation,
+  fetches each model's published context window from its vendor's official source, and
+  proposes a window = 60% of the vendor spec. After the user confirms with one digit, it
+  writes the values via config.patch and verifies.
   Use when the user says 上下文检查 / 上下文优化 / 优化上下文 / 检查上下文 / 上下文窗口检查 /
   上下文体检 / 检查一下模型上下文 / 上下文大小要不要调 / 把上下文窗口配一下, or asks to
   configure the context window after adding or switching a model. Also matches:

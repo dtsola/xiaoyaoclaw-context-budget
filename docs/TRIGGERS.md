@@ -75,7 +75,7 @@
 
 ```yaml
 name: xiaoyaoclaw-context-budget
-description: 上下文检查 / 上下文优化（OpenClaw 模型窗口预算）。核心目的 = 上下文优化：
+description: OpenClaw context check / context optimization (Context Budget). Core goal = context optimization:
   检测系统当前「已启用模型」的上下文窗口，到各模型官方来源取最新标称值，按 60% 给出建议窗口，
   用户确认后写入配置并校验。
   主触发词：上下文检查、上下文优化；同义说法：检查上下文、优化上下文、上下文窗口检查、上下文体检、
