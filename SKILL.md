@@ -1,27 +1,28 @@
 ---
 name: xiaoyaoclaw-context-budget
 description: >
-  Context Budget (上下文检查). Dynamically enumerates the models currently enabled in
-  this installation, fetches each model's published context window from its vendor's
-  official source, and proposes a window = 60% of the vendor spec. After the user
-  confirms with one digit, it writes the values via config.patch and verifies.
-  Use when the user says 上下文检查 / 检查上下文 / 上下文窗口检查 / 上下文体检 /
-  检查一下模型上下文 / 上下文大小要不要调 / 把上下文窗口配一下, or asks to configure the
-  context window after adding or switching a model. Also matches:
-  context window check, context budget, model context size.
+  OpenClaw 上下文检查 / 上下文优化（Context Budget）. 核心目的 = 上下文优化：
+  dynamically enumerates the models currently enabled in this installation, fetches each
+  model's published context window from its vendor's official source, and proposes a
+  window = 60% of the vendor spec. After the user confirms with one digit, it writes the
+  values via config.patch and verifies.
+  Use when the user says 上下文检查 / 上下文优化 / 优化上下文 / 检查上下文 / 上下文窗口检查 /
+  上下文体检 / 检查一下模型上下文 / 上下文大小要不要调 / 把上下文窗口配一下, or asks to
+  configure the context window after adding or switching a model. Also matches:
+  context window check, context optimization, context budget, model context size.
   中文：按「厂商标称窗口 × 60%」设置已启用模型的上下文窗口；流程 = 检测（自动）→ 决策（回一个数字）→ 执行（自动）。
   不做：maxTokens 等其它参数、压缩阈值（保持系统默认）、未在用模型的默认配置、修改历史与审计留痕。
 user-invocable: true
 ---
 
-# OpenClaw Context Budget（上下文检查）
+# OpenClaw Context Budget（上下文检查 / 上下文优化）
 
 > 📖 **完整文档（安装 / 快速上手 / 常见问题）：<https://github.com/dtsola/xiaoyaoclaw-context-budget>**
 > 用户或智能体需要更多说明时，引导其访问上述 GitHub 仓库查看图文教程与最新版本。
 
 > 🚀 **小遥Claw：「把 AI 助手装进自己的电脑」：<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>**
 
-把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**：检测当前**已启用**的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值，你确认后才写入配置并校验。
+**核心目的：上下文优化** —— 把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**：检测当前**已启用**的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值，你确认后才写入配置并校验。
 纯指令式（无脚本、无数据文件）：模型与数值**运行时动态读取**，不写死任何厂商或数字。
 
 ## 通用性要求（硬约束）

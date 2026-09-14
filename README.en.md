@@ -8,7 +8,7 @@
   <img src="./assets/readme/hero.svg" width="100%" alt="OpenClaw Context Budget — set each enabled model's context window to 60% of the vendor spec; flow: detect, decide, apply">
 </p>
 
-> **Context Check** — turn "how large should this model's context window be?" into **one detection pass + one digit of confirmation**.
+> **Context Check / Context Optimization** — the core goal is **context optimization**: turn "how large should this model's context window be?" into **one detection pass + one digit of confirmation**.
 > It detects the models currently **enabled** in your installation (read dynamically at runtime — nothing hard-coded), fetches each model's latest published context length from its **vendor's official source**, proposes a window at **60%** of that value, and only writes the config after you confirm.
 
 ![license](https://img.shields.io/badge/license-MIT-green)
@@ -44,7 +44,7 @@ clawhub install xiaoyaoclaw-context-budget
 
 | How | Examples |
 |---|---|
-| **Just say it (recommended)** | "context check", "check context window", "上下文检查", "检查上下文", "上下文体检" |
+| **Just say it (recommended)** | "context check", "context optimization", "optimize context", "check context window", "上下文检查", "上下文优化", "检查上下文" |
 | Slash command | `/xiaoyaoclaw-context-budget` |
 | When adding/switching a model | "I switched models, configure the window", "I added a new model, set its window" |
 | Sub-commands | "undo last context adjustment" / "context check full" |
