@@ -75,6 +75,11 @@ docs:
   - 核心意见：① 清会话缓存未限定范围（Medium finding）② 行为超出声明（重启 + 清会话状态 = `environment_proportionality: concern`）③ 触发面过宽（mutation-capable 技能）④ 无审计被判削弱可追责性 ⑤ hero.svg 注释被判"隐藏指令"（降噪项）
   - **v1.0.1 修改**：SKILL.md 新增「权限与写操作声明（权限透明）」8 行表；执行第 4/5 步改为「只提示不擅自执行 / 会话状态默认不动 + 限定当前会话 `contextTokens` + 先备份 + 需确认」；新增「触发分级（读 / 写分离）」；不留痕表述统一（不写审计/历史；仅记本次旧值；用户可要求变更摘要）；README 中英同步（写操作透明 / 联网只取数 / 不做自动化）；hero.svg **去掉全部注释**（组 id 已表意）并把版本号改为 v1.0.1；`docs/README-DRAFT.md` 移入 `docs/archive/`；DESIGN/INTERACTION/EVAL 同步口径（EVAL 加"历史记录"声明）
   - 校验：`audit_readme.py` 通过（2 张本地图）；`visual_verify.py` 全绿
+- 2026-09-14 13:47–13:59：**v1.0.2 扫描结果（仍 suspicious，已公开 latest=1.0.2）→ 出 v1.0.3 并提交**
+  - v1.0.2 意见：*"documentation mixes local configuration writes with broad or automatic triggers"* + *"one rollback path contradicts its no-local-files promise"*
+  - **根因**：子指令写作「撤销**上次**上下文调整」= 暗示跨会话留档，与「记录仅会话内、不落盘」自相矛盾
+  - **v1.0.3 改动**：① 「撤销上次」→「**撤销本次调整**」（并注明仅同会话内有效）② **去自动化语义** —— 流程统一为「检测（只读）→ 决策（回一个数字）→ 执行（确认后写入）」，README 明示「**本技能不会自动运行**」③ 可选 cron 段落标题改为「可选，需你自行配置；技能本身不会自动运行」④ **触发词收窄**为精确意图清单 + 明确「不要因泛泛谈到 context / memory / token 就激活」
+  - 提交：v1.0.3（`source-commit 965fd02`）；挂了 14:12 的一次性自动检查
 - 2026-09-14 13:36：**v1.0.1 扫描结果 = 仍 suspicious，但收窄到一条自相矛盾** → 出 **v1.0.2**
   - 扫描原文：*"it also permits session-storage edits and backups despite claiming it writes no files"*
   - 根因：权限表「绝不写 = 不写任何文件」与「会话状态可编辑 + 先备份」互相打架
