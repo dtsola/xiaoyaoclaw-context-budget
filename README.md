@@ -1,165 +1,156 @@
 # OpenClaw Context Budget 🎛️
 
 <div align="center">
-  <strong>🇨🇳 中文</strong> | <a href="README.en.md">🌐 English</a>
+  <strong>上下文检查 / 上下文优化</strong> | <a href="README.en.md">🌐 English</a>
 </div>
 
 <p align="center">
   <img src="./assets/readme/hero.svg" width="100%" alt="OpenClaw Context Budget — 把每个已启用模型的上下文窗口设为厂商标称的 60%；流程：检测 → 决策 → 执行">
 </p>
 
-> **上下文检查 / 上下文优化** —— 核心目的是**上下文优化**：把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**。
-> 检测当前**已启用**的模型（运行时动态读取，不写死任何模型），去各厂商**官方来源**取最新标称窗口，按 **60%** 给出建议值，你确认后写入配置并校验。
+> 上下文优化「调音师」：检测当前已启用的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值——你回一个数字，它才写入配置并校验。
+> OpenClaw context check / context optimization: enumerates the enabled models, fetches each vendor's published context length, proposes 60% of it, and applies only after a one-digit confirmation.
 
 ![license](https://img.shields.io/badge/license-MIT-green)
-[![ClawHub](https://img.shields.io/badge/ClawHub-xiaoyaoclaw--context--budget-blue)](https://clawhub.ai/dtsola)
+[![ClawHub downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fclawhub.ai%2Fapi%2Fv1%2Fskills%2Fxiaoyaoclaw-context-budget&query=skill.stats.downloads&label=ClawHub%20downloads&color=blue)](https://clawhub.ai/dtsola/skills/xiaoyaoclaw-context-budget)
 
-> 📌 下文出现的模型名与数值均为**示例**；实际运行时全部动态读取。
+## 为什么需要
 
----
+各家模型的上下文窗口差别很大（200K / 1M…），而 OpenClaw 在模型未声明窗口时会退回一个**兜底默认值**，于是：
 
-## 为什么需要它
+- 📉 **窗口被低估**：上下文**过早自动摘要**、长任务被打断、压缩时卡顿
+- 📈 **窗口被高估**：模型在超长上下文里**注意力分散**，回答质量下滑
+- 🧾 **配置无来源**：配置里那个数字是谁填的、依据是什么，无处可查
+- 🧮 **比例算不过来**：「留 60% 余量」这条经验要人工换算成绝对 token 数，每个模型都算一遍
 
-各家模型的上下文窗口差别很大（200K / 1M…）。而 OpenClaw 在模型未显式声明窗口时会退回一个**兜底默认值**（源码常量 `DEFAULT_CONTEXT_TOKENS = 200000`），由此带来：
+手工做法是：逐个查厂商官网 → 自己乘 60% → 改配置 → 重启验证。**这个 skill 把这一串变成一次检测 + 一个数字。**
 
-- **窗口被低估** → 上下文被**过早自动摘要**、长任务被打断、压缩时卡顿
-- **窗口被高估** → 模型在超长上下文里**注意力分散**，回答质量下降
-- **配置无从溯源** → 配置里写着某个数字，但没人知道依据
+## 特性
 
-本技能按一条固定最佳实践处理：**有效窗口 = 厂商标称窗口 × 60%**。
-
----
+- 🎯 **固定最佳实践**：有效窗口 = 厂商标称窗口 × **60%**（留余量，减少注意力分散）
+- 🔎 **动态枚举**：模型清单**运行时从配置读取**（在用 + 图像/PDF 这类旁路在用），不写死任何厂商或模型
+- 🌐 **官方来源取数**：每次联网到厂商官方文档/接口取**最新**标称窗口，来源与抓取时间写在决策卡上
+- 1️⃣ **一个数字确认**：流程 = 检测（自动）→ 决策（回一个数字）→ 执行（自动），无需读文档
+- 🧱 **只碰窗口**：`maxTokens` 等其它参数、压缩阈值（保持系统默认）**一律不动**
+- 🕊️ **不留痕**：不写审计文件、不记录修改历史；只留一份改前快照供一步回退
+- 📦 **纯指令式**：无脚本、无数据文件、无第三方依赖，不联网装包，跨安装形态一致
+- ↩️ **可回退**：一条指令撤销上次调整（按记录的旧值反向写入）
+- 🛡️ **不静默改配置**：必须经你确认才写入；写入走 `config.patch`，且校验运行态是否生效
 
 ## 安装
+
+```bash
+# ClawHub（推荐）
+clawhub install xiaoyaoclaw-context-budget
+
+# 或从 GitHub 手动安装
+git clone https://github.com/dtsola/xiaoyaoclaw-context-budget
+# 把 SKILL.md 放到你的 skills 目录
+```
+
+## 使用
+
+1. 把 skill 放到 OpenClaw 的 skills 目录
+2. 对你的 agent 说：**「上下文优化」** / 「上下文检查」 / 「把上下文窗口配一下」
+3. agent 先检测 → 给你一张决策卡 → 你回 `1` 采纳 → 它写入并校验，回报三行结果
+
+触发词（自然语言即可）：上下文优化 / 上下文检查 / 检查上下文 / 优化上下文 / 上下文窗口检查 / 上下文体检 / 检查一下模型上下文
+斜杠命令：`/xiaoyaoclaw-context-budget`
+
+## 🚀 快速上手（三步，1 分钟）
+
+### Step 1：安装技能
 
 ```bash
 clawhub install xiaoyaoclaw-context-budget
 ```
 
-（或把技能目录放入 `<workspace>/skills/` 或 `~/.openclaw/skills/`）
+装完你的 agent 就多了一项「上下文优化」能力，不需要任何 API key。
 
----
+### Step 2：说一句话
 
-## 使用
+> 上下文优化
 
-| 方式 | 例子 |
-|---|---|
-| **说一句（推荐）** | 「上下文检查」「上下文优化」「检查上下文」「优化上下文」「上下文窗口检查」「上下文体检」「检查一下模型上下文」 |
-| 斜杠命令 | `/xiaoyaoclaw-context-budget` |
-| 换/加模型时 | 「我换模型了，把窗口配上」「我加了个 kimi，窗口配一下」 |
-| 子指令 | 「撤销上次上下文调整」／「上下文检查 全量」 |
-
----
-
-## 使用流程：检测 → 决策 → 执行
-
-**① 检测（自动，你不需要提供任何信息）**
-技能自己完成：找系统里在用的模型 → 去各模型**官方文档**取最新标称窗口 → 与当前配置比对 → 按 60% 算建议值。
-
-- 无差异 → `✅ 检测完成：模型窗口都合适，无需调整。` **结束**
-- 有差异 → 出决策卡 ↓
-
-**② 决策（你只回一个数字）**
+agent 会：① 盘你系统里**在用**的模型 → ② 去各厂商官方来源取最新标称窗口（约 30–60 秒）→ ③ 给你决策卡：
 
 ```
 🎛️ 检测到 1 项可调整
-· minimax/MiniMax-M3（图像）｜ 官网标称 1,000,000 ｜ 现值 200,000 → 建议 600,000
-· deepseek-flash（在用）｜ 官网 1,000,000 ｜ 现值 600,000 ✅ 无需调整
-*建议值 = 官网窗口 × 60%（留余量，防注意力分散）*｜来源：官方文档（抓取时间见卡）
-
+· <provider>/<model>（在用）｜ 官方标称 1,000,000 ｜ 现值 200,000 → 建议 600,000
+· <provider>/<model>（在用）｜ 官方标称 1,000,000 ｜ 现值 600,000 ✅ 无需调整
 回 1 采纳 ｜ 2 保持现状 ｜ 3 看详情
 ```
 
-**③ 执行（自动，回执 3 行）**
+### Step 3：回一个数字
+
+回 `1` → 它写入配置、刷新、校验，回报：
 
 ```
-✅ 已改 1 项：minimax/M3 200,000 → 600,000
+✅ 已改 1 项：<provider>/<model> 200,000 → 600,000
 校验通过（窗口已生效）
 如需回退回「撤销上次上下文调整」
 ```
 
-快照、写入、刷新、校验全部在幕后完成。
+### 日常使用习惯
 
----
-
-## 行为边界
-
-| 做 | 不做 |
+| 场景 | 做法 |
 |---|---|
-| 设置**已启用模型**的上下文窗口（按 60%） | `maxTokens`（输出上限）等其它参数 |
-| 读配置、取官方标称、写入窗口值 | 压缩阈值（保持系统默认，不碰） |
-| 存储一份改前快照以便回退 | 未在用模型的默认批量配置 |
-| 官方取不到时向你确认 | 静默执行（必须经你确认才写配置） |
-| — | **不记录修改历史、不留审计痕迹** |
+| 首次配置 / 定期检查 | 说「上下文优化」，看卡回一个数字 |
+| 新增 / 更换模型 | 说「我换模型了，把窗口配上」——只针对新模型出卡 |
+| 想调比例 | 说「上下文优化，比例用 50%」（默认 60%） |
+| 怀疑长任务被打断 | 说「上下文优化」，先检测再给结论（不直接改） |
+| 改错想退回 | 说「撤销上次上下文调整」 |
+| 定期自检（可选） | 自行挂 cron：无差异时**静默**，只有厂商改窗口才提醒 |
+| 只看不配 | 决策卡阶段回 `2`（零改动），或回 `3` 看详情 |
 
----
+## 和手工配置对比
 
-## 可选建议配置（按需自选，技能不强制）
+| | 手工查官网 + 手填 | **xiaoyaoclaw-context-budget** |
+|---|---|---|
+| 取数 | 逐个逛厂商文档，靠印象 | ✅ 官方来源取最新值，附来源与时间 |
+| 换算 | 自己乘 60%，容易算错 | ✅ 自动算，比例可临时指定 |
+| 覆盖面 | 常漏掉图像/PDF 这类旁路模型 | ✅ 动态枚举在用 + 旁路在用 |
+| 生效确认 | 改完靠感觉 | ✅ 写入后校验运行态，如实报差异 |
+| 出错成本 | 不知道改前是什么 | ✅ 一条指令回退 |
+| 干扰面 | 容易顺手改到别的参数 | ✅ 只碰窗口字段，其它参数一律不动 |
 
-### 1. 定期自检（推荐：每周一次）
+## 目录结构
 
-让技能定期自动跑「检测 + 比对」，**没有变化时完全静默**，只有厂商真的改了窗口才提醒你。
-
-| 频率 | 适合 |
-|---|---|
-| 每周一 09:00（建议） | 常规使用 |
-| 每两周 | 模型库变动少 |
-| 不自动 | 只在需要时手动说「上下文检查」 |
-
-OpenClaw cron 示例：
-
-```jsonc
-{
-  "schedule": { "kind": "cron", "expr": "0 9 * * 1", "tz": "Asia/Shanghai" },
-  "payload": { "kind": "agentTurn", "message": "执行上下文检查；若无差异请回复 NO_REPLY（静默）" },
-  "sessionTarget": "isolated",
-  "delivery": { "mode": "announce" }
-}
 ```
-
-### 2. 事件触发（可选增强）
-
-当配置里新增了模型时主动问一句"要不要顺便把窗口配上"。需要额外的变更检测，不影响主流程使用。
-
-### 3. 比例可调（默认 60%）
-
-想更激进或更保守，直接在对话里说明即可，例如：
-> 「上下文检查，比例用 50%」／「这个模型按 80% 配」
-
-技能支持按模型单独设置，比例不写死。
-
----
-
-## 安全与回退
-
-- 改动前保留**改前快照**，支持一条指令回退（覆盖式、不编号、不留痕）
-- 只在确认后才写配置：**不存在静默改配置的路径**
-- 改配置一律 `config.patch`（**不使用 `config.apply`**），只写窗口字段
-
----
-
-## 常见问题
-
-**Q：检测要多久？** 约 30–60 秒，主要花在去各厂商官方文档取数。
-
-**Q：官方取不到怎么办？** 技能会请你给一个官方链接，或选择"按现状跳过"，绝不静默沿用旧值。
-
-**Q：会不会改到我其它设置？** 不会。只写模型的窗口字段。
-
-**Q：为什么是 60%？** 留余量给提示词、工具输出与多轮对话，避免模型在长上下文里注意力分散。它是**注意力保护**，不是机械溢出余量。
-
-**Q：为什么不一起设压缩阈值？** 因为 OpenClaw 的压缩阈值是**全局唯一**值，无法按模型精确设置；用默认最稳。
-
----
-
-## 生态
-
-本技能是 **xiaoyaoclaw** 系列之一（家 / 内容 / 进度 / 知识 / 体检 / 输入 / 检查 …）。
-
-- GitHub：<https://github.com/dtsola/xiaoyaoclaw-context-budget>
-- ClawHub：<https://clawhub.ai/dtsola>
-- 小遥Claw：「把 AI 助手装进自己的电脑」<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>
+xiaoyaoclaw-context-budget/
+├── SKILL.md                    # 技能主体（口径 / 三段式流程 / 硬规则自检 / 触发词）
+├── assets/readme/
+│   └── hero.svg                # README 封面（纯 SVG）
+├── docs/
+│   ├── DESIGN.md               # 设计文档（机制取证 / 口径 / 流程 / 边界）
+│   ├── INTERACTION.md          # 用户视角交互流程
+│   ├── TRIGGERS.md             # 触发词与反触发清单
+│   └── EVAL-2026-09-14.md      # 首次全流程演练记录
+├── README.md / README.en.md
+└── LICENSE
+```
 
 ## License
 
-MIT © 2026 dtsola
+MIT — 随便用，署名可选。
+
+---
+
+## 🛠️ 需要定制？
+
+**Agent & Skills 定制，价格 ¥800 起。**
+
+- 微信：`dtsola`（添加好友时备注：**openclaw定制**）
+- 服务范围：OpenClaw 多 agent 部署 / 工作区规范化 / 自定义 Skill 开发 / agent 记忆系统搭建 / 知识库搭建
+
+## 姊妹项目
+
+- 🏠 **xiaoyaoclaw-workspace-initializer**（工作区初始化器）：给每个 agent 一个「家」——标准目录结构 + WORKSPACE.md 规范 + 多 agent 配置安全。<https://github.com/dtsola/xiaoyaoclaw-workspace-initializer>
+- 🧠 **xiaoyaoclaw-memory-distill**（记忆蒸馏）：把对话蒸馏成 MEMORY.md + 日常日志，解决上下文溢出。<https://github.com/dtsola/xiaoyaoclaw-memory-distill>
+- 🗂️ **xiaoyaoclaw-task-progress-tracker**（任务进度跟踪器）：目录即容器，PROGRESS.md 即进度——tasks/ 与 projects/ 生命周期管理。<https://github.com/dtsola/xiaoyaoclaw-task-progress-tracker>
+- 📚 **xiaoyaoclaw-kb-retriever**（知识库检索器）：本地知识库检索——分层 data_structure.md 索引导航 + 渐进式检索（md/pdf/xlsx），无需 API key，Windows / macOS 双平台。<https://github.com/dtsola/xiaoyaoclaw-kb-retriever>
+- 📎 **xiaoyaoclaw-web-clipper**（网页剪藏）：把任意网页保存为带 frontmatter 的本地 Markdown——双引擎正文提取（readability + trafilatura 降级链）、中文文件名安全、批量剪藏 + 去重。<https://github.com/dtsola/xiaoyaoclaw-web-clipper>
+- 🤝 **xiaoyaoclaw-agent-orchestrator**（Agent 协作编排，**协作层**）：架在生态之上——拆任务、分 agent、管进度、聚结果、失败重试。<https://github.com/dtsola/xiaoyaoclaw-agent-orchestrator>
+- 📊 **xiaoyaoclaw-usage-report**（用量报告）：解析 session JSONL，回答「每次 agent 任务花了多久、用了哪些工具/技能/模型、消耗了多少 token」——零依赖纯本地。<https://github.com/dtsola/xiaoyaoclaw-usage-report>
+- 🩺 **xiaoyaoclaw-workspace-auditor**（工作区体检，只读审计）：目录合规 / 任务健康 / 记忆日志 / 知识库索引 / 垃圾文件，分级报告 + 修复建议。<https://github.com/dtsola/xiaoyaoclaw-workspace-auditor>
+- 🎛️ **xiaoyaoclaw-commander**（跨工具指挥官，**指挥层**）：让任意支持 Agent Skills 的工具（Claude Code / Codex / OpenCode / Trae / DSH）指挥小遥Claw / OpenClaw 多 agent 系统。<https://github.com/dtsola/xiaoyaoclaw-commander>
+- 🔍 **xiaoyaoclaw-seo-skill**（SEO 技能）：网站搜索可见性分析与优化——audit / page / content / schema / geo 五流程 + 零依赖审计脚本。<https://github.com/dtsola/xiaoyaoclaw-seo-skill>
