@@ -115,7 +115,7 @@
 - **命令**：`/xiaoyaoclaw-context-budget`
 - **反触发**：什么是上下文窗口（纯问答）／整理记忆（归 memory-distill）／token 用量（归 usage-report）／只说"上下文"／用户说"先别改配置"
 
-详见 `docs/TRIGGERS.md`。
+发布包内以 `SKILL.md` 的 description 为准（触发词设计稿保留在工作区任务目录，不随包发布）。
 
 ---
 
@@ -160,7 +160,7 @@
 | 校验 | `/status` = `239k/600k` ✅；生成的 Pi 模型目录同步 600000 |
 | 生效链路经验 | ① `config.patch` 仅就地重载 → 需 restart ② `/status` 优先读会话级缓存数 → 需清理 ③ `agent/models.json` 按 agent 运行时刷新 |
 
-演练记录见 `docs/EVAL-2026-09-14.md`；系统视角原稿见 `docs/archive/`。
+演练记录与设计原稿保存在工作区任务目录（不随包发布）。
 
 ---
 
@@ -170,8 +170,8 @@
 |---|---|
 | P0 | 英文 README、README hero 图（可复用 beautify-github-readme 技能） |
 | P1 | 发布：GitHub（`dtsola/xiaoyaoclaw-context-budget`）+ ClawHub（**走全流程确认制**：提交前经用户确认，公开由用户处理） |
-| P2 | 事件触发（检测到新增模型时主动提示）；定期自检写进 README 可选建议 |
 | P2 | 上游建议：per-model / per-agent 压缩阈值覆盖，或比例式阈值（`compactAtRatio`） |
+| — | 明确不做：任何定时/事件驱动能力（不创建定时任务、不监听配置变化） |
 
 ---
 

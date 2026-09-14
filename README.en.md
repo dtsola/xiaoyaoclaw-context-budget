@@ -37,7 +37,7 @@ Doing it by hand means: open each vendor's docs → multiply by 60% → edit con
 - ↩️ **Rollback** — one command undoes **this** adjustment; the record lives in-session and is never written to disk
 - 🛡️ **Transparent writes** — **window fields only**; writes happen **only after your confirmation** (reply `1`) via `config.patch`; it does **not restart the runtime or clear session state on its own** (it only suggests); live state is verified afterwards and mismatches are reported
 - 🔒 **Network reads only** — visits vendor official sources to read the published window; never uploads local data
-- ⏱️ **No automation baked in** — **this skill never runs automatically** (no scheduled jobs, no background behavior); the cron example is an opt-in you configure yourself
+- ⏱️ **No automation baked in** — **this skill never runs automatically** (no scheduled jobs, no background behavior, no config watching)
 
 ## Install
 
@@ -101,7 +101,6 @@ To revert, reply "undo this adjustment"
 | Want a different ratio | Say "context optimization, use 50%" (default 60%) |
 | Suspect long tasks are cut off | Say "context optimization" — it checks first, then concludes (no blind change) |
 | Changed your mind (same session) | Say "undo this adjustment" — the record lives in-session and is never written to disk |
-| Periodic self-check (optional) | Schedule it yourself via cron (the skill never runs on its own): **silent** when nothing changed; pings you only when a vendor updates a window |
 | Look but don't apply | Reply `2` (zero changes) or `3` for details |
 
 ## vs. manual configuration
@@ -124,9 +123,8 @@ xiaoyaoclaw-context-budget/
 │   ├── hero.svg                # README cover (pure SVG)
 │   └── community-qr.png        # community group QR code
 ├── docs/
-│   ├── DESIGN.md               # Design doc (mechanism evidence / rules / flow / boundaries)
-│   ├── INTERACTION.md          # User-facing interaction flow
-│   └── TRIGGERS.md             # Trigger phrases and anti-triggers
+│   └── DESIGN.md               # Design doc (mechanism evidence / rules / flow / boundaries)
+├── skill-card.md               # ClawHub skill card (description / use case / risks)
 ├── README.md / README.en.md
 └── LICENSE
 ```

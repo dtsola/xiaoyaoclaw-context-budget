@@ -11,14 +11,8 @@ docs:
     desc: 技能主体 v0.1（口径 + 检测/决策/执行 + 动态取数策略 + 落配置硬规则自检 + 反触发）
   - path: README.md
     desc: 用户视角 README（触发方式 / 三段式流程 / 边界 / 可选建议配置 / FAQ）
-  - path: docs/INTERACTION.md
-    desc: 用户视角交互流程（含全周期使用流程）
-  - path: docs/TRIGGERS.md
-    desc: 触发词设计（主触发词「上下文检查」+ 反触发清单 + description 建议文本）
   - path: docs/EVAL-2026-09-14.md
     desc: 首次全流程演练记录（官网 L1 取证 + 冲突 + 执行 + 校验）
-  - path: docs/archive/
-    desc: 设计原稿（系统视角方案与交互流程设计，仅溯源用）
 ---
 
 # xiaoyaoclaw-context-budget（OpenClaw Context Budget）
@@ -78,7 +72,7 @@ docs:
 - 2026-09-14 13:47–13:59：**v1.0.2 扫描结果（仍 suspicious，已公开 latest=1.0.2）→ 出 v1.0.3 并提交**
   - v1.0.2 意见：*"documentation mixes local configuration writes with broad or automatic triggers"* + *"one rollback path contradicts its no-local-files promise"*
   - **根因**：子指令写作「撤销**上次**上下文调整」= 暗示跨会话留档，与「记录仅会话内、不落盘」自相矛盾
-  - **v1.0.3 改动**：① 「撤销上次」→「**撤销本次调整**」（并注明仅同会话内有效）② **去自动化语义** —— 流程统一为「检测（只读）→ 决策（回一个数字）→ 执行（确认后写入）」，README 明示「**本技能不会自动运行**」③ 可选 cron 段落标题改为「可选，需你自行配置；技能本身不会自动运行」④ **触发词收窄**为精确意图清单 + 明确「不要因泛泛谈到 context / memory / token 就激活」
+  - **v1.0.3 改动**：① 「撤销上次」→「**撤销本次调整**」（并注明仅同会话内有效）② **去自动化语义** —— 流程统一为「检测（只读）→ 决策（回一个数字）→ 执行（确认后写入）」，README 明示「**本技能不会自动运行**」③ 可选检查段落标题改为「可选，需你自行配置；技能本身不会自动运行」④ **触发词收窄**为精确意图清单 + 明确「不要因泛泛谈到 context / memory / token 就激活」
   - 提交：v1.0.3（`source-commit 965fd02`）；挂了 14:12 的一次性自动检查
 - 2026-09-14 13:36：**v1.0.1 扫描结果 = 仍 suspicious，但收窄到一条自相矛盾** → 出 **v1.0.2**
   - 扫描原文：*"it also permits session-storage edits and backups despite claiming it writes no files"*
@@ -106,13 +100,11 @@ docs:
 
 | 文档 | 说明 | 更新 |
 |------|------|------|
-| docs/DESIGN.md | 设计文档（机制事实 + 9 条口径 + 三段式流程 + 纯指令式实现 + 路线） | 2026-09-14 |
+| docs/DESIGN.md | 设计文档（机制事实 + 口径 + 流程 + 纯指令式实现 + 路线） | 2026-09-14 |
+| skill-card.md | ClawHub 技能卡（描述 / 用例 / 风险与缓解） | 2026-09-14 |
 | SKILL.md | 技能主体 v0.1（纯指令式） | 2026-09-14 |
 | README.md | 用户视角 README | 2026-09-14 |
-| docs/INTERACTION.md | 用户视角交互流程 + 全周期使用流程 | 2026-09-14 |
-| docs/TRIGGERS.md | 触发词 + 反触发清单 | 2026-09-14 |
 | docs/EVAL-2026-09-14.md | 首次全流程演练记录 | 2026-09-14 |
-| docs/archive/ | 设计原稿（仅溯源） | 2026-09-14 |
 
 <!--
 使用说明（agent 维护，用户可忽略）：
