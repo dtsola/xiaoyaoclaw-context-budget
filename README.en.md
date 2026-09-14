@@ -32,10 +32,12 @@ Doing it by hand means: open each vendor's docs → multiply by 60% → edit con
 - 🌐 **Official sources** — fetches the **latest** published window from vendor docs/APIs each run; source and fetch time appear on the decision card
 - 1️⃣ **One-digit confirmation** — flow = detect (automatic) → decide (one digit) → apply (automatic); no docs to read
 - 🧱 **Window fields only** — `maxTokens` and every other parameter, plus compaction thresholds (left at system default), are **never touched**
-- 🕊️ **No trail** — no audit files, no change history; only a single pre-change snapshot for one-step rollback
+- 🕊️ **No trail** — no audit files, no history list; only the previous values of the fields being changed are recorded for one-step rollback (single overwrite)
 - 📦 **Instruction-only** — no scripts, no data files, no third-party dependencies; consistent across install shapes
 - ↩️ **Rollback** — one command undoes the last adjustment (writes the recorded old values back)
-- 🛡️ **Never writes silently** — writes happen only after your confirmation, via `config.patch`, and the live state is verified afterwards
+- 🛡️ **Transparent writes** — **window fields only**; writes happen **only after your confirmation** (reply `1`) via `config.patch`; it does **not restart the runtime or clear session state on its own** (it only suggests); live state is verified afterwards and mismatches are reported
+- 🔒 **Network reads only** — visits vendor official sources to read the published window; never uploads local data
+- ⏱️ **No automation baked in** — the skill creates no scheduled jobs; the cron example is an opt-in you configure yourself
 
 ## Install
 

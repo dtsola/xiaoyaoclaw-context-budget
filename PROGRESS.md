@@ -70,6 +70,11 @@ docs:
   - 推送：`dcf3f9c4` → main（走代理 `127.0.0.1:22307`，一次成功）
   - 远端核验：根目录 5 文件 + `assets/`、`docs/`；`assets/readme/hero.svg` 4292 B ✅
   - 项目进度 45 → **70**（剩：ClawHub 发布，按全流程确认制需用户确认后提交）
+- 2026-09-14 13:1x–13:2x：**ClawHub 已提交 v1.0.0 并公开**（用户手动公开）；但线上安全扫描判定 **ClawScan = suspicious**（静态扫描 clean；LLM 复核 + AIG 1 项 finding）→ 按意见收窄权限（**v1.0.1 待重发**）
+  - 报告来源：`clawhub scan download xiaoyaoclaw-context-budget --version 1.0.0` → zip 内 `clawscan.json` / `static-analysis.json` / `skillspector.json`
+  - 核心意见：① 清会话缓存未限定范围（Medium finding）② 行为超出声明（重启 + 清会话状态 = `environment_proportionality: concern`）③ 触发面过宽（mutation-capable 技能）④ 无审计被判削弱可追责性 ⑤ hero.svg 注释被判"隐藏指令"（降噪项）
+  - **v1.0.1 修改**：SKILL.md 新增「权限与写操作声明（权限透明）」8 行表；执行第 4/5 步改为「只提示不擅自执行 / 会话状态默认不动 + 限定当前会话 `contextTokens` + 先备份 + 需确认」；新增「触发分级（读 / 写分离）」；不留痕表述统一（不写审计/历史；仅记本次旧值；用户可要求变更摘要）；README 中英同步（写操作透明 / 联网只取数 / 不做自动化）；hero.svg **去掉全部注释**（组 id 已表意）并把版本号改为 v1.0.1；`docs/README-DRAFT.md` 移入 `docs/archive/`；DESIGN/INTERACTION/EVAL 同步口径（EVAL 加"历史记录"声明）
+  - 校验：`audit_readme.py` 通过（2 张本地图）；`visual_verify.py` 全绿
 - 2026-09-14 12:5x：**本地全局安装完成**（用户要求「本地全局安装一下，我来测试」）
   - 安装路径：`state/skills/xiaoyaoclaw-context-budget/SKILL.md`（与项目同源）
   - 关键发现：**技能是白名单制** —— 每个 agent 的 `agents.list[].skills` 数组 = 允许清单，与全局技能目录逐条对应（29 项）；因此"全局安装" = ①拷文件到 `state/skills/` ②把技能名加进各 agent 白名单（缺任一步都不可用）
