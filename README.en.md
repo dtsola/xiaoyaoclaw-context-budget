@@ -126,8 +126,7 @@ xiaoyaoclaw-context-budget/
 ├── docs/
 │   ├── DESIGN.md               # Design doc (mechanism evidence / rules / flow / boundaries)
 │   ├── INTERACTION.md          # User-facing interaction flow
-│   ├── TRIGGERS.md             # Trigger phrases and anti-triggers
-│   └── EVAL-2026-09-14.md      # First end-to-end evaluation record
+│   └── TRIGGERS.md             # Trigger phrases and anti-triggers
 ├── README.md / README.en.md
 └── LICENSE
 ```

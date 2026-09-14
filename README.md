@@ -126,8 +126,7 @@ xiaoyaoclaw-context-budget/
 ├── docs/
 │   ├── DESIGN.md               # 设计文档（机制取证 / 口径 / 流程 / 边界）
 │   ├── INTERACTION.md          # 用户视角交互流程
-│   ├── TRIGGERS.md             # 触发词与反触发清单
-│   └── EVAL-2026-09-14.md      # 首次全流程演练记录
+│   └── TRIGGERS.md             # 触发词与反触发清单
 ├── README.md / README.en.md
 └── LICENSE
 ```
