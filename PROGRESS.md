@@ -70,6 +70,12 @@ docs:
   - 推送：`dcf3f9c4` → main（走代理 `127.0.0.1:22307`，一次成功）
   - 远端核验：根目录 5 文件 + `assets/`、`docs/`；`assets/readme/hero.svg` 4292 B ✅
   - 项目进度 45 → **70**（剩：ClawHub 发布，按全流程确认制需用户确认后提交）
+- 2026-09-14 12:5x：**本地全局安装完成**（用户要求「本地全局安装一下，我来测试」）
+  - 安装路径：`state/skills/xiaoyaoclaw-context-budget/SKILL.md`（与项目同源）
+  - 关键发现：**技能是白名单制** —— 每个 agent 的 `agents.list[].skills` 数组 = 允许清单，与全局技能目录逐条对应（29 项）；因此"全局安装" = ①拷文件到 `state/skills/` ②把技能名加进各 agent 白名单（缺任一步都不可用）
+  - 执行：`config.patch` 一次性重写 `agents.list`（载荷基于实况配置生成后追加，保留各 agent 原有数组，含 xiaogang/xiaoguang 的 workspace 私有技能）→ 7 个 agent 全部含本技能（30/31/40/32/30/30/30 项）
+  - 待用户实测；测试建议：说「上下文优化」；想看差异链路用「比例 50%」再「撤销上次上下文调整」
+
 
 - 2026-09-14 12:31–12:34：**英文 README**（`README.en.md`，与中文版 1:1 对齐）+ **hero 图**（`assets/readme/hero.svg`，纯 SVG，1200×360）
   - hero 由 `xiaoyaoclaw-beautify-github-readme` 技能生产：走它的「确认模式 → 勘察（参照同系列 memory-distill hero 视觉语言）→ 确认实现方式（纯 SVG）→ 生产 → 渲染级校验」流程
