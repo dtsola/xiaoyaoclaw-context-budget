@@ -37,6 +37,7 @@ Doing it by hand means: open each vendor's docs → multiply by 60% → edit con
 - ↩️ **Rollback** — one command undoes **this** adjustment; the record lives in-session and is never written to disk
 - 🛡️ **Transparent writes** — **window fields only**; writes happen **only after your confirmation** (reply `1`) via `config.patch`; it does **not restart the runtime or clear session state on its own** (it only suggests); live state is verified afterwards and mismatches are reported
 - 🔒 **Network reads only** — visits vendor official sources to read the published window; never uploads local data
+- 👀 **Scoped reads** — reads only window-related fields (model id, window, output cap, and the agents' model references); it does not read out or display credentials or unrelated configuration
 - ⏱️ **No automation baked in** — **this skill never runs automatically** (no scheduled jobs, no background behavior, no config watching)
 
 ## Install

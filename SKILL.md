@@ -30,7 +30,7 @@ user-invocable: true
 
 | 类别 | 具体范围 |
 |---|---|
-| **读（只读）** | 用 agent 的 gateway 工具读配置；读运行态窗口（`/status` 或 session_status）；联网读厂商官方来源取标称窗口 |
+| **读（只读，范围受限）** | **只读窗口相关字段**：`models.providers.*.models[]` 的 `id` / `contextWindow` / `maxTokens`，以及各 agent 的 `model` / `imageModel` / `pdfModel` 引用；读运行态窗口（`/status` 或 session_status）；联网读厂商官方来源取标称窗口。**不读取、不展示、不外发任何其它配置段**（API 密钥、渠道设置、工具/插件配置等） |
 | **写（仅此一项）** | `models.providers.<provider>.models[].contextWindow` —— 通过 `config.patch` 写入，且**必须经用户确认**（决策卡回 `1`）后才执行 |
 | **绝不写** | 除上表唯一的窗口字段外，**不写任何配置项**（`maxTokens`、压缩阈值、`agents` / `tools` / `channels` / `plugins` 等）；**不创建定时任务**；**不写任何本地文件**（无脚本、无数据文件、**也不生成任何副本或审计类文件**） |
 | **联网** | 仅"取数"（读厂商官方来源）；**不上传任何本地数据**、不外发配置内容 |
@@ -81,9 +81,10 @@ user-invocable: true
 
 然后依次做：
 
-1. **读取配置（环境无关）**
-   - 首选 agent 的 gateway 工具 `config.get`（无需知道文件路径）
-   - 不可用时：按平台常见位置探测配置文件；仍找不到 → 询问用户
+1. **读取配置（环境无关，且只取所需字段）**
+   - 首选 agent 的 gateway 工具 `config.get`（无需知道文件路径）；**若返回整份配置，只提取上述窗口相关字段用于计算，其余内容不回显、不传递、不外发**
+   - 不可用时：按平台常见位置探测配置文件（同样只提取窗口相关字段）；仍找不到 → 询问用户
+   - **不读取任何密钥/凭据类内容**（如渠道密钥、令牌、供应商 API key）；如操作过程中意外出现此类内容，一律忽略且不写入任何输出
 2. **动态枚举模型**（不在指令里写死任何模型）
    - `在用`：各 agent 的 `model.primary` + `model.fallbacks`、`agents.defaults.model`
    - `旁路在用`：`agents.defaults.imageModel` / `pdfModel`

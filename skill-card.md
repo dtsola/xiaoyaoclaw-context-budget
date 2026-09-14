@@ -22,5 +22,5 @@ Risk: Values are read from vendor documentation over the network, which can be u
 Mitigation: Sources are labelled on the card with fetch time; if the source is unofficial or unreachable the value is marked as untraced and the skill refuses to write it. <br>
 Risk: Changing the window can affect context compaction behaviour in long sessions. <br>
 Mitigation: Compaction thresholds are left at system defaults; the suggested value keeps 40% headroom against attention dilution; changes can be undone in the same session using the recorded previous values. <br>
-Risk: The skill reads local configuration and the runtime status of the installation. <br>
-Mitigation: Reads are limited to configuration and status; no local data is uploaded, and no files are written to disk by this skill. <br>
+Risk: The skill reads local configuration, which can contain credentials or unrelated settings. <br>
+Mitigation: Reads are scoped to window-related fields only (model ids, contextWindow, maxTokens, and the agents' model / imageModel / pdfModel references). Credential-bearing or unrelated configuration sections are neither read out, shown in the conversation, nor forwarded anywhere. <br>
