@@ -75,6 +75,10 @@ docs:
   - 核心意见：① 清会话缓存未限定范围（Medium finding）② 行为超出声明（重启 + 清会话状态 = `environment_proportionality: concern`）③ 触发面过宽（mutation-capable 技能）④ 无审计被判削弱可追责性 ⑤ hero.svg 注释被判"隐藏指令"（降噪项）
   - **v1.0.1 修改**：SKILL.md 新增「权限与写操作声明（权限透明）」8 行表；执行第 4/5 步改为「只提示不擅自执行 / 会话状态默认不动 + 限定当前会话 `contextTokens` + 先备份 + 需确认」；新增「触发分级（读 / 写分离）」；不留痕表述统一（不写审计/历史；仅记本次旧值；用户可要求变更摘要）；README 中英同步（写操作透明 / 联网只取数 / 不做自动化）；hero.svg **去掉全部注释**（组 id 已表意）并把版本号改为 v1.0.1；`docs/README-DRAFT.md` 移入 `docs/archive/`；DESIGN/INTERACTION/EVAL 同步口径（EVAL 加"历史记录"声明）
   - 校验：`audit_readme.py` 通过（2 张本地图）；`visual_verify.py` 全绿
+- 2026-09-14 13:36：**v1.0.1 扫描结果 = 仍 suspicious，但收窄到一条自相矛盾** → 出 **v1.0.2**
+  - 扫描原文：*"it also permits session-storage edits and backups despite claiming it writes no files"*
+  - 根因：权限表「绝不写 = 不写任何文件」与「会话状态可编辑 + 先备份」互相打架
+  - **v1.0.2 修改**：① **删除"改会话存储"能力** —— 会话状态行改为「不处理、不修改任何会话存储；只解释显示滞后、由用户自行处置」② 执行第 5 步同步改为「不处理」（不改动即无失败面）③「绝不写」精确化：除窗口字段外不写任何配置项、不创建定时任务、**不写任何本地文件（含不生成备份/审计文件）** ④ 回退记录明确为「**仅本次会话内**记录旧值，不落盘、不写文件」⑤ README 中英 / DESIGN / INTERACTION 同步（去掉"备份/快照"字样）⑥ `docs/EVAL-2026-09-14.md` 移入 `docs/archive/`（历史记录，避免旧版行为描述被当作现行能力）⑦ hero.svg 版本号 → v1.0.2
 - 2026-09-14 12:5x：**本地全局安装完成**（用户要求「本地全局安装一下，我来测试」）
   - 安装路径：`state/skills/xiaoyaoclaw-context-budget/SKILL.md`（与项目同源）
   - 关键发现：**技能是白名单制** —— 每个 agent 的 `agents.list[].skills` 数组 = 允许清单，与全局技能目录逐条对应（29 项）；因此"全局安装" = ①拷文件到 `state/skills/` ②把技能名加进各 agent 白名单（缺任一步都不可用）
