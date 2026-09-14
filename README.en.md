@@ -9,7 +9,7 @@
 </p>
 
 > Context optimization, in one pass: it enumerates the models currently enabled in your installation, fetches each vendor's latest published context length, proposes **60%** of it — and writes the config only after you return a single digit.
-> OpenClaw context check / context optimization: detect → decide → apply, with official sources, no scripts, no data files.
+> OpenClaw context check / context optimization: read-only detect → one-digit decide → apply after confirmation; official sources, no scripts, no data files, and it never runs on its own.
 
 ![license](https://img.shields.io/badge/license-MIT-green)
 [![ClawHub downloads](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fclawhub.ai%2Fapi%2Fv1%2Fskills%2Fxiaoyaoclaw-context-budget&query=skill.stats.downloads&label=ClawHub%20downloads&color=blue)](https://clawhub.ai/dtsola/skills/xiaoyaoclaw-context-budget)
@@ -30,14 +30,14 @@ Doing it by hand means: open each vendor's docs → multiply by 60% → edit con
 - 🎯 **One fixed best practice** — effective window = vendor spec × **60%** (headroom against attention dilution)
 - 🔎 **Dynamic enumeration** — the model list is **read from the live config** (models in use, plus sidecar models like image/PDF); nothing hard-coded
 - 🌐 **Official sources** — fetches the **latest** published window from vendor docs/APIs each run; source and fetch time appear on the decision card
-- 1️⃣ **One-digit confirmation** — flow = detect (automatic) → decide (one digit) → apply (automatic); no docs to read
+- 1️⃣ **One-digit confirmation** — flow = detect (read-only) → decide (one digit) → apply (after confirmation); no docs to read
 - 🧱 **Window fields only** — `maxTokens` and every other parameter, plus compaction thresholds (left at system default), are **never touched**
 - 🕊️ **No trail** — no audit files, no history list; only the previous values of the fields being changed are recorded for one-step rollback (single overwrite)
 - 📦 **Instruction-only** — no scripts, no data files, no third-party dependencies; consistent across install shapes
-- ↩️ **Rollback** — one command undoes the last adjustment (writes the recorded old values back)
+- ↩️ **Rollback** — one command undoes **this** adjustment; the record lives in-session and is never written to disk
 - 🛡️ **Transparent writes** — **window fields only**; writes happen **only after your confirmation** (reply `1`) via `config.patch`; it does **not restart the runtime or clear session state on its own** (it only suggests); live state is verified afterwards and mismatches are reported
 - 🔒 **Network reads only** — visits vendor official sources to read the published window; never uploads local data
-- ⏱️ **No automation baked in** — the skill creates no scheduled jobs; the cron example is an opt-in you configure yourself
+- ⏱️ **No automation baked in** — **this skill never runs automatically** (no scheduled jobs, no background behavior); the cron example is an opt-in you configure yourself
 
 ## Install
 
@@ -89,7 +89,7 @@ Reply `1` → it writes the config, triggers the reload, verifies, and reports:
 ```
 ✅ 1 item updated: <provider>/<model> 200,000 → 600,000
 Verified (window is live)
-To revert, reply "undo last context adjustment"
+To revert, reply "undo this adjustment"
 ```
 
 ### Daily habits
@@ -100,8 +100,8 @@ To revert, reply "undo last context adjustment"
 | Added / switched a model | Say "I switched models, configure the window" — only the new model gets a card |
 | Want a different ratio | Say "context optimization, use 50%" (default 60%) |
 | Suspect long tasks are cut off | Say "context optimization" — it checks first, then concludes (no blind change) |
-| Changed your mind | Say "undo last context adjustment" |
-| Periodic self-check (optional) | Schedule it yourself via cron: **silent** when nothing changed; pings you only when a vendor updates a window |
+| Changed your mind (same session) | Say "undo this adjustment" — the record lives in-session and is never written to disk |
+| Periodic self-check (optional) | Schedule it yourself via cron (the skill never runs on its own): **silent** when nothing changed; pings you only when a vendor updates a window |
 | Look but don't apply | Reply `2` (zero changes) or `3` for details |
 
 ## vs. manual configuration

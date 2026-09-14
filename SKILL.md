@@ -2,16 +2,17 @@
 name: xiaoyaoclaw-context-budget
 description: >
   OpenClaw context check / context optimization (Context Budget). Core goal = context
-  optimization: dynamically enumerates the models currently enabled in this installation,
-  fetches each model's published context window from its vendor's official source, and
-  proposes a window = 60% of the vendor spec. After the user confirms with one digit, it
-  writes the values via config.patch and verifies.
-  Use when the user says 上下文检查 / 上下文优化 / 优化上下文 / 检查上下文 / 上下文窗口检查 /
-  上下文体检 / 检查一下模型上下文 / 上下文大小要不要调 / 把上下文窗口配一下, or asks to
-  configure the context window after adding or switching a model. Also matches:
-  context window check, context optimization, context budget, model context size.
-  中文：按「厂商标称窗口 × 60%」设置已启用模型的上下文窗口；流程 = 检测（自动）→ 决策（回一个数字）→ 执行（自动）。
-  不做：maxTokens 等其它参数、压缩阈值（保持系统默认）、未在用模型的默认配置、修改历史与审计留痕。
+  optimization: reads the models currently enabled in this installation, reads each model's
+  published context window from its vendor's official source, and proposes a window = 60%
+  of the vendor spec. It writes nothing until the user confirms; then it patches only the
+  window field and reports the result. This skill never runs automatically and creates no
+  scheduled jobs.
+  Use ONLY when the user explicitly asks, with one of these exact intents:
+  上下文检查 / 上下文优化 / 检查一下模型上下文 / 把上下文窗口配一下 / 设置上下文窗口,
+  or in English: context window check, configure context window, context optimization.
+  Do NOT activate on generic talk about context, memory, prompts, or token usage.
+  中文：按「厂商标称窗口 × 60%」设置已启用模型的上下文窗口；流程 = 检测（只读）→ 决策（用户回一个数字）→ 执行（确认后写入）。
+  不做：maxTokens 等其它参数、压缩阈值（保持系统默认）、未在用模型的默认配置、自动/定时运行、修改历史与审计留痕。
 user-invocable: true
 ---
 
@@ -22,7 +23,7 @@ user-invocable: true
 
 > 🚀 **小遥Claw：「把 AI 助手装进自己的电脑」：<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>**
 
-**核心目的：上下文优化** —— 把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**：检测当前**已启用**的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值，你确认后才写入配置并校验。
+**核心目的：上下文优化** —— 把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**：检测当前**已启用**的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值，**你确认后才写入**配置并校验。**本技能不会自动运行**（无定时任务、无后台行为）。
 纯指令式（无脚本、无数据文件）：模型与数值**运行时动态读取**，不写死任何厂商或数字。
 
 ## 权限与写操作声明（权限透明）
@@ -71,9 +72,9 @@ user-invocable: true
 
 > 无论哪种意图，**写入都必须经决策卡确认** —— 本技能没有"一句话直接改配置"的路径。
 
-## 流程：检测（自动）→ 决策（回一个数字）→ 执行（自动）
+## 流程：检测（只读）→ 决策（回一个数字）→ 执行（确认后写入）
 
-### ① 检测（自动）
+### ① 检测（只读，零改动）
 
 先发一句（避免等待空档）：
 > 🎛️ 开始上下文检查：看当前启用的模型 → 去各厂商官方来源取最新窗口（约 30–60 秒）
@@ -120,7 +121,7 @@ user-invocable: true
 
 **呈现纪律**：若该安装形态已设置自定义压缩阈值，会出现「公式本意触发点」与「本环境可执行触发点」分叉 —— **必须并排标注**，不能只给一个数。
 
-### ③ 执行（自动）
+### ③ 执行（经确认后写入）
 
 用户确认后按固定 6 步执行，然后回执 3 行。
 
@@ -145,7 +146,7 @@ user-invocable: true
 ```
 ✅ 已改 N 项：<provider>/<model> 旧值 → 新值
 校验通过（运行态窗口已生效）
-如需回退回「撤销上次上下文调整」
+如需回退回「撤销本次调整」
 ```
 
 ## 厂商文档检索策略（运行时，不内置数据表）
@@ -161,7 +162,7 @@ user-invocable: true
 | 用户说 | 行为 |
 |---|---|
 | 上下文检查 | 默认 = 检测（零改动） |
-| 撤销上次上下文调整 | 按第 1 步记录的旧值生成反向 patch → 写入 → 校验（**无历史清单**） |
+| 撤销本次调整（**仅同一会话内有效**） | 按第 1 步记录的旧值生成反向 patch → 写入 → 校验；记录**未落盘**，跨会话无法撤销（**无历史清单**） |
 | 上下文检查 全量 | 含"已定义未在用"模型的巡检 |
 
 ## 反触发（不要触发本技能）
