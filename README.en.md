@@ -119,7 +119,8 @@ To revert, reply "undo last context adjustment"
 xiaoyaoclaw-context-budget/
 ├── SKILL.md                    # Skill body (rules / detect-decide-apply / self-checks / triggers)
 ├── assets/readme/
-│   └── hero.svg                # README cover (pure SVG)
+│   ├── hero.svg                # README cover (pure SVG)
+│   └── community-qr.png        # community group QR code
 ├── docs/
 │   ├── DESIGN.md               # Design doc (mechanism evidence / rules / flow / boundaries)
 │   ├── INTERACTION.md          # User-facing interaction flow
@@ -141,6 +142,16 @@ MIT — use it freely; attribution optional.
 
 - WeChat: `dtsola` (mention **openclaw定制** when adding)
 - Scope: OpenClaw multi-agent deployment / workspace standardization / custom skill development / agent memory systems / knowledge bases
+
+## 💬 Community
+
+Xiaoyao product user group — feedback · tips · feature requests:
+
+<p align="center">
+  <img src="./assets/readme/community-qr.png" width="280" alt="Xiaoyao AI user community QR code">
+</p>
+
+<p align="center">Scan to join, or add WeChat <code>dtsola</code> (note: <b>加群</b>)</p>
 
 ## Sister projects
 

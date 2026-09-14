@@ -119,7 +119,8 @@ agent 会：① 盘你系统里**在用**的模型 → ② 去各厂商官方来
 xiaoyaoclaw-context-budget/
 ├── SKILL.md                    # 技能主体（口径 / 三段式流程 / 硬规则自检 / 触发词）
 ├── assets/readme/
-│   └── hero.svg                # README 封面（纯 SVG）
+│   ├── hero.svg                # README 封面（纯 SVG）
+│   └── community-qr.png        # 交流群二维码
 ├── docs/
 │   ├── DESIGN.md               # 设计文档（机制取证 / 口径 / 流程 / 边界）
 │   ├── INTERACTION.md          # 用户视角交互流程
@@ -141,6 +142,16 @@ MIT — 随便用，署名可选。
 
 - 微信：`dtsola`（添加好友时备注：**openclaw定制**）
 - 服务范围：OpenClaw 多 agent 部署 / 工作区规范化 / 自定义 Skill 开发 / agent 记忆系统搭建 / 知识库搭建
+
+## 💬 加入交流群
+
+小遥全系产品用户交流群——产品反馈 · 使用交流 · 功能建议：
+
+<p align="center">
+  <img src="./assets/readme/community-qr.png" width="280" alt="小遥AI 用户交流群二维码：扫码加群，或添加微信 dtsola（备注：加群）">
+</p>
+
+<p align="center">扫码加群，或添加微信 <code>dtsola</code>（备注：<b>加群</b>）</p>
 
 ## 姊妹项目
 
