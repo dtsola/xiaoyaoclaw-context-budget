@@ -1,7 +1,7 @@
 ---
 type: project
 status: active
-progress: 45
+progress: 70
 created: 2026-09-14
 updated: 2026-09-14
 docs:
@@ -64,7 +64,14 @@ docs:
   - 已执行：`scripts/` 整体移出项目（备份于 `tmp/ctxbudget-scripts-removed-20260914/`）；`SKILL.md` 重写「取数策略 / 硬规则自检 / 纯指令式实现」；`DESIGN.md` §十 改写并记录代价
   - 原脚本承担的防错，改为 `SKILL.md` 内**自检清单**（完整数组 + 长度/id 核对 + 数值校验）
   - 进度 55 → **45**（按当前实际完成度：设计定稿 + SKILL v0.1，发布未做）
-- 2026-09-14 12:31–12:3x：**英文 README**（`README.en.md`，与中文版 1:1 对齐）+ **hero 图**（`assets/readme/hero.svg`）
+- 2026-09-14 12:35：**GitHub 发布完成**（用户授权「项目上传 github」）
+  - 发布前清理：公开面文案将「指挥官」统一替换为「用户」（7 个 md）；README 头部按生态惯例补齐语言切换 + hero 嵌入 + 徽章（license / ClawHub 链接）；`audit_readme.py` 静态审计通过
+  - 建仓：`dtsola/xiaoyaoclaw-context-budget`（public / main / 7 topics / 中文 description，走 Python 写 API 避开 PS 的 GBK 坑）
+  - 推送：`dcf3f9c4` → main（走代理 `127.0.0.1:22307`，一次成功）
+  - 远端核验：根目录 5 文件 + `assets/`、`docs/`；`assets/readme/hero.svg` 4292 B ✅
+  - 项目进度 45 → **70**（剩：ClawHub 发布，按全流程确认制需用户确认后提交）
+
+- 2026-09-14 12:31–12:34：**英文 README**（`README.en.md`，与中文版 1:1 对齐）+ **hero 图**（`assets/readme/hero.svg`，纯 SVG，1200×360）
   - hero 由 `xiaoyaoclaw-beautify-github-readme` 技能生产：走它的「确认模式 → 勘察（参照同系列 memory-distill hero 视觉语言）→ 确认实现方式（纯 SVG）→ 生产 → 渲染级校验」流程
   - 校验结果：`visual_verify.py` **全绿**（无静态问题 / 无对比度问题 / 无边缘贴边）；视觉模型复核判定「可发布」，中文渲染正常、无裁切
   - 途中修掉一个误报：校验器按「文字所属组内最近填充矩形」判定背景，容量条与其后文字同组 → 被误判为文字背景；已将容量条移入独立分组置于末尾（视觉不变，报告干净）
@@ -73,7 +80,7 @@ docs:
 - 2026-09-14 12:21：**用户追加通用性要求** —— SKILL.md 需同时支持 **OpenClaw 与 小遥Claw**；模型必须**运行时动态读取**，禁止写死本机模型/数值
   - `SKILL.md` 重写：新增「通用性要求（硬约束）」表（不硬编码路径 / 模型名 / 窗口数值 / 运行态数值 / 生效机制；示例仅作示例）；配置读写改为一律走 `gateway config.get` / `config.patch`；取数改为「运行时检索策略」而非内置厂商 URL 表；决策卡与回执模板全部占位符化
   - `DESIGN.md` 新增 §三之二「通用性要求」；§八 注明为**勘察期实例记录**（非技能内置）
-  - `README.md` 首屏注明适用 OpenClaw + 小遥Claw、示例仅为示例
+  - `README.md` 首屏去掉平台宣言（保留「示例仅为示例」注记）；同一轮还把 SKILL.md 正文与 frontmatter 里的平台宣言一并删除（用户 12:27 确认）
 
 ## 文档索引
 
