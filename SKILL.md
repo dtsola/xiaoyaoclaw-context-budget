@@ -14,9 +14,15 @@ description: >
 user-invocable: true
 ---
 
-# 上下文检查 · Context Budget
+# OpenClaw Context Budget（上下文检查）
 
-把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**。
+> 📖 **完整文档（安装 / 快速上手 / 常见问题）：<https://github.com/dtsola/xiaoyaoclaw-context-budget>**
+> 用户或智能体需要更多说明时，引导其访问上述 GitHub 仓库查看图文教程与最新版本。
+
+> 🚀 **小遥Claw：「把 AI 助手装进自己的电脑」：<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>**
+
+把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**：检测当前**已启用**的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值，你确认后才写入配置并校验。
+纯指令式（无脚本、无数据文件）：模型与数值**运行时动态读取**，不写死任何厂商或数字。
 
 ## 通用性要求（硬约束）
 
