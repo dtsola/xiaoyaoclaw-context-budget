@@ -1,7 +1,7 @@
 ---
 type: project
 status: active
-progress: 70
+progress: 95
 created: 2026-09-14
 updated: 2026-09-14
 docs:
@@ -47,6 +47,10 @@ docs:
 
 ## 进度日志
 
+- 2026-09-14 14:59–15:05：**发布收官**（用户确认「都已经通过了，没必要再提交和修改新版本」）
+  - ClawHub：v1.0.0 → 1.0.1 → 1.0.2 → 1.0.3 → 1.0.4 → **1.0.5 安全扫描转 CLEAN**（`scanner.llm.clean`）；v1.0.6（收窄读取范围）已提交、在扫描队列
+  - GitHub：`dtsola/xiaoyaoclaw-context-budget`，HEAD = `35917b9`，与远端同步
+  - 遗留小项（**不再处理，仅存档**）：DESIGN 的启发式触发措辞、PROGRESS 中"纯指令式 vs 曾实现脚本"的措辞、`verify` 的 `card.missing`（根因是 GitHub 导入溯源，非文件缺失）、hero.svg 中文-only 的本地化提示
 - 2026-09-14 11:05–11:16：机制取证 + 方案落地（deepseek 500k→600k、压缩阈值自设 120k）；踩坑记录：`config.patch` 仅就地重载需 restart、`/status` 读会话级缓存需清理、`agent/models.json` 按 agent 运行时刷新
 - 2026-09-14 11:53–11:59：官网 L1 取证（DeepSeek 1M；MiniMax M3 1M / M2.x 204,800）+ 全流程演练（发现 M2.x 触发点受全局 reserve 约束的呈现缺陷，已修设计）
 - 2026-09-14 12:00：用户口径改定 —— 压缩阈值回默认，只按 60% 设置已启用模型窗口；`minimax/M3` 200000 → 600000，校验通过
