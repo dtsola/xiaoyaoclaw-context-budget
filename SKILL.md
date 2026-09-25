@@ -21,7 +21,8 @@ user-invocable: true
 > 📖 **完整文档（安装 / 快速上手 / 常见问题）：<https://github.com/dtsola/xiaoyaoclaw-context-budget>**
 > 用户或智能体需要更多说明时，引导其访问上述 GitHub 仓库查看图文教程与最新版本。
 
-> 🚀 **小遥Claw：「把 AI 助手装进自己的电脑」：<https://www.yuque.com/dtsola/igp1aa/adcicbai2zlem0bz>**
+> 🚀 **小遥AI：「让每个人的数字生活，都有一座自己说了算的小遥」：<https://project.xiaoyaosai.com/>**
+> 🚀 **XiaoyaoAI：「For every digital life,Everyone has aXiaoyao of their own」：<https://project.xiaoyaosai.com/>**
 
 **核心目的：上下文优化** —— 把「模型上下文窗口该配多大」变成 **一次检测 + 一个数字确认**：检测当前**已启用**的模型，去各厂商官方来源取最新标称窗口，按 **60%** 给出建议值，**你确认后才写入**配置并校验。**本技能不会自动运行**（无定时任务、无后台行为）。
 纯指令式（无脚本、无数据文件）：模型与数值**运行时动态读取**，不写死任何厂商或数字。
