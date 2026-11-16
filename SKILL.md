@@ -5,13 +5,16 @@ description: >
   optimization: reads the models currently enabled in this installation, reads each model's
   published context window from its vendor's official source, and proposes a window = 60%
   of the vendor spec. It writes nothing until the user confirms; then it patches only the
-  window field and reports the result. This skill never runs automatically and creates no
-  scheduled jobs.
+  window field and reports the result. Configuration is read field-by-field: it never loads
+  the whole openclaw.json into context and never reads or echoes channel keys, tokens or
+  provider API keys — only the model/window fields it needs are requested.
+  This skill never runs automatically and creates no scheduled jobs.
   Use ONLY when the user explicitly asks, with one of these exact intents:
   上下文检查 / 上下文优化 / 检查一下模型上下文 / 把上下文窗口配一下 / 设置上下文窗口,
   or in English: context window check, configure context window, context optimization.
   Do NOT activate on generic talk about context, memory, prompts, or token usage.
   中文：按「厂商标称窗口 × 60%」设置已启用模型的上下文窗口；流程 = 检测（只读）→ 决策（用户回一个数字）→ 执行（确认后写入）。
+  配置一律**按字段读取**：不把整份 openclaw.json 读进会话，不读取/不回显渠道密钥、令牌、供应商 API key。
   不做：maxTokens 等其它参数、压缩阈值（保持系统默认）、未在用模型的默认配置、自动/定时运行、修改历史与审计留痕。
 user-invocable: true
 ---
@@ -31,7 +34,7 @@ user-invocable: true
 
 | 类别 | 具体范围 |
 |---|---|
-| **读（只读，范围受限）** | **只读窗口相关字段**：`models.providers.*.models[]` 的 `id` / `contextWindow` / `maxTokens`，以及各 agent 的 `model` / `imageModel` / `pdfModel` 引用；读运行态窗口（`/status` 或 session_status）；联网读厂商官方来源取标称窗口。**不读取、不展示、不外发任何其它配置段**（API 密钥、渠道设置、工具/插件配置等） |
+| **读（只读，范围受限）** | **只读窗口相关字段**：`models.providers.*.models[]` 的 `id` / `contextWindow` / `maxTokens`，以及各 agent 的 `model` / `imageModel` / `pdfModel` 引用；读运行态窗口（`/status` 或 session_status）；联网读厂商官方来源取标称窗口。**按字段取数，不整份读取 `openclaw.json`**（字段级读取 → 本地过滤后只取所需字段 → 用户脱敏摘录，见流程 ①）；**不读取、不展示、不外发任何其它配置段**（API 密钥、渠道设置、工具/插件配置等） |
 | **写（仅此一项）** | `models.providers.<provider>.models[].contextWindow` —— 通过 `config.patch` 写入，且**必须经用户确认**（决策卡回 `1`）后才执行 |
 | **绝不写** | 除上表唯一的窗口字段外，**不写任何配置项**（`maxTokens`、压缩阈值、`agents` / `tools` / `channels` / `plugins` 等）；**不创建定时任务**；**不写任何本地文件**（无脚本、无数据文件、**也不生成任何副本或审计类文件**） |
 | **联网** | 仅"取数"（读厂商官方来源）；**不上传任何本地数据**、不外发配置内容 |
@@ -46,7 +49,7 @@ user-invocable: true
 
 | 要求 | 说明 |
 |---|---|
-| **不硬编码安装路径** | 不假设配置文件位置；优先用 agent 的 gateway 工具读写配置（`config.get` / `config.patch`）。工具不可用时，再按平台常见位置逐一探测（标准安装 `~/.openclaw/`、桌面版内嵌 runtime 的 state 目录），或直接问用户 |
+| **不硬编码安装路径** | 不假设配置文件位置；优先用 agent 的 gateway 工具读写配置（`config.get` **按字段取值** / `config.patch`）。工具不可用时，再按平台常见位置逐一探测（标准安装 `~/.openclaw/`、桌面版内嵌 runtime 的 state 目录），**只读所需字段**，或直接问用户 |
 | **不硬编码模型名** | 模型清单一律**运行时从配置动态枚举**（`models.providers.*.models[]`）；不得在指令里写死任何具体厂商或模型 |
 | **不硬编码窗口数值** | 厂商标称窗口**每次运行时联网检索**官方来源，不内置数据文件、不缓存、不沿用旧值 |
 | **不假设会话窗口数值** | 校验一律读运行态（`/status` 或 session_status），不写死数字 |
@@ -82,10 +85,22 @@ user-invocable: true
 
 然后依次做：
 
-1. **读取配置（环境无关，且只取所需字段）**
-   - 首选 agent 的 gateway 工具 `config.get`（无需知道文件路径）；**若返回整份配置，只提取上述窗口相关字段用于计算，其余内容不回显、不传递、不外发**
-   - 不可用时：按平台常见位置探测配置文件（同样只提取窗口相关字段）；仍找不到 → 询问用户
-   - **不读取任何密钥/凭据类内容**（如渠道密钥、令牌、供应商 API key）；如操作过程中意外出现此类内容，一律忽略且不写入任何输出
+1. **读取配置：按字段读，绝不把整份配置读进会话**
+
+   > **硬规则**：`openclaw.json` 里有渠道密钥、令牌、供应商 API key。"整份读进来再忽略敏感项"是**不合格**的做法 —— 内容一旦进入工具输出，就已经落在会话记录里了，忽略不改变它已经泄露的事实。
+
+   按此顺序，**能用前者就不用后者**：
+
+   a. **字段级读取（首选）**：若 gateway 的 `config.get` 支持按路径/字段取值，就逐次只取所需字段：
+      - `agents.defaults.model`
+      - `agents.list[*].model.primary` / `model.fallbacks`
+      - `agents.defaults.imageModel` / `pdfModel`
+      - `models.providers.<provider>.models[].id` 与 `contextWindow`（只为已确认在用的 provider 取）
+   b. **本地过滤（次选）**：若只能整份返回或只能读文件，则**在本地先过滤再取**：用一条只输出上述字段的命令（如 `jq` / Node 一行式）读取，**只让过滤后的结果进入上下文**；整份内容不打印、不落盘、不粘进回复。取不到 `jq` 等工具时，用「读文件 + 只提取所需键」的等价做法，**不得**把全文读进来再筛。
+   c. **用户提供脱敏摘录（兜底）**：以上都做不到（如无本地执行能力），则**请用户给出脱敏摘录**（只需各 agent 的 model 字段与在用 provider 的模型 id / contextWindow），不要索取整份配置。
+   d. **找不到配置或字段缺失** → 询问用户，不做猜测性读取。
+
+   **无论走哪条路**：不读取、不回显、不传递、不写入任何密钥/凭据类字段（渠道密钥、令牌、API key、webhook 地址等）；若某次输出意外带出这类内容，立即停止使用该输出、不复制进任何回复或文件，并改用 a~c 重新取数。
 2. **动态枚举模型**（不在指令里写死任何模型）
    - `在用`：各 agent 的 `model.primary` + `model.fallbacks`、`agents.defaults.model`
    - `旁路在用`：`agents.defaults.imageModel` / `pdfModel`
@@ -140,6 +155,8 @@ user-invocable: true
 **落配置的硬规则（逐条自检，源自一次真实事故）**
 
 1. **载荷必须带完整数组**：`models.providers.<provider>.models[]` 在 `config.patch` 中是**数组整体替换** → 凡涉及某 provider，必须提交该 provider 的**完整 models 数组**（含未改动模型），否则会误删同 provider 的其它模型
+   - 只提交 `models[]` 数组本身，**不提交 provider 对象其它字段**（`apiKey` 等凭据字段一律不出现在 diff、载荷或回复里）
+   - 若该数组元素里本身含凭据类字段（少见）→ **中止**并说明，改为请用户手工改窗口值
 2. **自检数组**：核对数组长度与 id 列表，确认仅目标模型的 `contextWindow` 有变化；不一致即中止
 3. 只写窗口字段；不碰 `maxTokens`、不碰压缩阈值；**写入前展示 diff 并二次确认**；来源标注为「未溯源」的值一律不写入
 4. 写入用 `config.patch`（禁用 `config.apply`）
@@ -184,7 +201,7 @@ user-invocable: true
 
 | 步骤 | 工具（按可用性选择，环境无关） |
 |---|---|
-| 读配置 / 枚举模型 | `gateway config.get`（首选）或 `read` 配置文件 |
+| 读配置 / 枚举模型 | `gateway config.get` **按字段取值**（首选）/ 本地过滤后只取所需字段（次选）/ 用户提供的脱敏摘录（兜底）——**不整份读取**（见流程 ① 第 1 步） |
 | 取厂商标称窗口 | `web_fetch`（必要时 `browser`） |
 | 落配置 | `gateway config.patch` |
 | 校验运行态窗口 | `/status` / `session_status` |
